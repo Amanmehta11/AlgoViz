@@ -115,3 +115,10 @@ code {
 * {
   box-sizing: border-box;
 }
+body {
+  margin: 0;
+}
+
+html {
+  overflow-x: hidden;
+}

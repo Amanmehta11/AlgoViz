@@ -2,6 +2,7 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import Sorting from "./pages/Sorting";
 import Searching from "./pages/Searching";
 import Home from "./pages/Home";
+import History from "./pages/History";
 // import SortingBasic from "./pages/SortingBasic";
 
 
@@ -11,6 +12,7 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/sorting" element={<Sorting />} />
       <Route path="/searching" element={<Searching />} />
+      <Route path="/history" element={<History />} />
     </Routes>
   );
 }

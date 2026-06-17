@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Searching() {
   const [array, setArray] = useState([5, 3, 8, 2, 9, 1]);
@@ -9,6 +10,26 @@ function Searching() {
   const [algorithm, setAlgorithm] = useState("linear");
   const navigate = useNavigate();
 
+const saveHistory = async (
+  algorithmName,
+  arrayData,
+  targetValue,
+  foundPosition
+) => {
+  try {
+    await axios.post("http://localhost:5000/history", {
+      algorithm: algorithmName,
+      array: arrayData,
+      target: Number(targetValue),
+      foundIndex: foundPosition,
+    });
+
+    console.log("History Saved");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
   const linearSearch = async () => {
     for (let i = 0; i < array.length; i++) {
       setActiveIndex(i);
@@ -16,9 +37,17 @@ function Searching() {
       await new Promise((resolve) => setTimeout(resolve, 500));
 
       if (array[i] == target) {
-        setFoundIndex(i);
-        return;
-      }
+  setFoundIndex(i);
+
+await saveHistory(
+  "Linear Search",
+  array,
+  target,
+  i
+);
+
+  return;
+}
     }
 
     alert("Element not found ❌");
@@ -45,9 +74,17 @@ function Searching() {
       await new Promise((res) => setTimeout(res, 600));
 
       if (arr[mid] == target) {
-        setFoundIndex(mid);
-        return;
-      } else if (arr[mid] < target) {
+  setFoundIndex(mid);
+
+await saveHistory(
+  "Binary Search",
+  arr,
+  target,
+  mid
+);
+
+  return;
+}else if (arr[mid] < target) {
         low = mid + 1;
       } else {
         high = mid - 1;

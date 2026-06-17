@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Sorting() {
   const [array, setArray] = useState([5, 3, 8, 2, 9, 1]);
@@ -36,6 +37,10 @@ function Sorting() {
     }
 
     setActiveIndex([]); // reset after sorting
+  await axios.post("http://localhost:5000/history", {
+  algorithm: "Bubble Sort",
+  array: arr,
+});
   };
   const handleSort = () => {
     if (algorithm === "bubble") {
@@ -70,6 +75,10 @@ function Sorting() {
     }
 
     setActiveIndex([]);
+    await axios.post("http://localhost:5000/history", {
+  algorithm: "Selection Sort",
+  array: arr,
+});
   };
   const insertionSort = async () => {
     let arr = [...array];
@@ -93,6 +102,10 @@ function Sorting() {
     }
 
     setActiveIndex([]);
+    await axios.post("http://localhost:5000/history", {
+  algorithm: "Insertion Sort",
+  array: arr,
+});
   };
 
   return (
@@ -146,7 +159,7 @@ function Sorting() {
           </button>
         </div>
 
-        <h3>Current Algorithm: {algorithm.toUpperCase()}</h3>
+        <h3 style={{ color: "white" }}>Current Algorithm: {algorithm.toUpperCase()}</h3>
         <div style={styles.barContainer}>
           {array.map((value, index) => (
             <div
@@ -184,7 +197,7 @@ const styles = {
   },
   container: {
     minHeight: "100vh",
-    width: "100vw",
+    width: "100%",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
