@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import ReactMarkdown from "react-markdown";
 
 function Sorting() {
   const [array, setArray] = useState([5, 3, 8, 2, 9, 1]);
   const [algorithm, setAlgorithm] = useState("bubble");
   const [activeIndex, setActiveIndex] = useState([]);
   const [speed, setSpeed] = useState(500);
+  const [aiExplanation, setAiExplanation] = useState("");
+  const [loadingAI, setLoadingAI] = useState(false);
   const navigate = useNavigate();
 
   const generateArray = () => {
@@ -37,10 +40,34 @@ function Sorting() {
     }
 
     setActiveIndex([]); // reset after sorting
-  await axios.post("http://localhost:5000/history", {
-  algorithm: "Bubble Sort",
-  array: arr,
-});
+    await axios.post("http://localhost:5000/history", {
+      algorithm: "Bubble Sort",
+      array: arr,
+    });
+  };
+
+  const explainWithAI = async () => {
+    try {
+      setLoadingAI(true);
+      setAiExplanation("");
+
+      const res = await axios.post("http://localhost:5000/ai-explain", {
+        algorithm:
+          algorithm === "bubble"
+            ? "Bubble Sort"
+            : algorithm === "selection"
+              ? "Selection Sort"
+              : "Insertion Sort",
+        array: array,
+      });
+
+      setAiExplanation(res.data.explanation);
+    } catch (error) {
+      console.log(error);
+      setAiExplanation("Unable to get AI explanation.");
+    } finally {
+      setLoadingAI(false);
+    }
   };
   const handleSort = () => {
     if (algorithm === "bubble") {
@@ -76,9 +103,9 @@ function Sorting() {
 
     setActiveIndex([]);
     await axios.post("http://localhost:5000/history", {
-  algorithm: "Selection Sort",
-  array: arr,
-});
+      algorithm: "Selection Sort",
+      array: arr,
+    });
   };
   const insertionSort = async () => {
     let arr = [...array];
@@ -103,9 +130,9 @@ function Sorting() {
 
     setActiveIndex([]);
     await axios.post("http://localhost:5000/history", {
-  algorithm: "Insertion Sort",
-  array: arr,
-});
+      algorithm: "Insertion Sort",
+      array: arr,
+    });
   };
 
   return (
@@ -125,9 +152,9 @@ function Sorting() {
           </select>
         </div>
 
-        <h1 style={{ marginTop: "10px", marginBottom: "10px" ,color:"white"}}>
-  Sorting Visualizer
-</h1>
+        <h1 style={{ marginTop: "10px", marginBottom: "10px", color: "white" }}>
+          Sorting Visualizer
+        </h1>
 
         <div style={styles.row}>
           <span style={styles.label}>Speed:</span>
@@ -154,12 +181,29 @@ function Sorting() {
           </button>
         </div>
         <div style={styles.mainButtonWrapper}>
+          <button
+            style={styles.aiButton}
+            onClick={explainWithAI}
+            disabled={loadingAI}
+          >
+            {loadingAI ? "🤖 Thinking..." : "🤖 Explain with AI"}
+          </button>
+        </div>
+        <div style={styles.mainButtonWrapper}>
           <button style={styles.mainButton} onClick={handleSort}>
             ▶ Start Sorting
           </button>
         </div>
 
-        <h3 style={{ color: "white" }}>Current Algorithm: {algorithm.toUpperCase()}</h3>
+        <h3 style={{ color: "white" }}>
+          Current Algorithm: {algorithm.toUpperCase()}
+        </h3>
+        {aiExplanation && (
+          <div style={styles.aiBox}>
+            <h3>🤖 AI Explanation</h3>
+            <ReactMarkdown>{aiExplanation}</ReactMarkdown>
+          </div>
+        )}
         <div style={styles.barContainer}>
           {array.map((value, index) => (
             <div
@@ -276,24 +320,44 @@ const styles = {
     borderRadius: "4px",
   },
   row: {
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  gap: "10px",
-  marginTop: "15px",
-  flexWrap: "wrap",
-},
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "10px",
+    marginTop: "15px",
+    flexWrap: "wrap",
+  },
 
-label: {
-  color: "#e2e8f0",
-  fontWeight: "500",
-},
+  label: {
+    color: "#e2e8f0",
+    fontWeight: "500",
+  },
 
-select: {
-  padding: "6px",
-  borderRadius: "6px",
-  border: "none",
-},
+  select: {
+    padding: "6px",
+    borderRadius: "6px",
+    border: "none",
+  },
+  aiButton: {
+    padding: "12px 22px",
+    borderRadius: "10px",
+    border: "none",
+    background: "linear-gradient(45deg, #8b5cf6, #6366f1)",
+    color: "white",
+    cursor: "pointer",
+    fontWeight: "bold",
+  },
+
+  aiBox: {
+    marginTop: "25px",
+    padding: "20px",
+    borderRadius: "12px",
+    backgroundColor: "rgba(139, 92, 246, 0.12)",
+    border: "1px solid rgba(139, 92, 246, 0.4)",
+    color: "white",
+    textAlign: "left",
+    lineHeight: "1.6",
+  },
 };
 
 export default Sorting;
