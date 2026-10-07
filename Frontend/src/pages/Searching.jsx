@@ -17,7 +17,7 @@ const saveHistory = async (
   foundPosition
 ) => {
   try {
-    await axios.post("http://localhost:5000/history", {
+    await axios.post("https://algoviz-backend-9b5w.onrender.com/history", {
       algorithm: algorithmName,
       array: arrayData,
       target: Number(targetValue),
@@ -179,7 +179,7 @@ const styles = {
     boxShadow: "0px 3px 10px rgba(0,0,0,0.2)",
   },
   card: {
-    width: "400px", // ⭐ ADD THIS
+    width: "400px", 
     maxWidth: "90%",
     backgroundColor: "rgba(255,255,255,0.05)",
     padding: "30px",

@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 
 function Sorting() {
   const [array, setArray] = useState([5, 3, 8, 2, 9, 1]);
@@ -40,7 +43,7 @@ function Sorting() {
     }
 
     setActiveIndex([]); // reset after sorting
-    await axios.post("http://localhost:5000/history", {
+    await axios.post("https://algoviz-backend-9b5w.onrender.com/history", {
       algorithm: "Bubble Sort",
       array: arr,
     });
@@ -51,15 +54,21 @@ function Sorting() {
       setLoadingAI(true);
       setAiExplanation("");
 
-      const res = await axios.post("http://localhost:5000/ai-explain", {
-        algorithm:
-          algorithm === "bubble"
-            ? "Bubble Sort"
-            : algorithm === "selection"
-              ? "Selection Sort"
-              : "Insertion Sort",
-        array: array,
-      });
+      const res = await axios.post(
+  "https://algoviz-backend-9b5w.onrender.com/ai-explain",
+  {
+    algorithm:
+      algorithm === "bubble"
+        ? "Bubble Sort"
+        : algorithm === "selection"
+          ? "Selection Sort"
+          : "Insertion Sort",
+    array: array,
+  },
+  {
+    timeout: 60000,
+  }
+);
 
       setAiExplanation(res.data.explanation);
     } catch (error) {
@@ -102,7 +111,7 @@ function Sorting() {
     }
 
     setActiveIndex([]);
-    await axios.post("http://localhost:5000/history", {
+    await axios.post("https://algoviz-backend-9b5w.onrender.com/history", {
       algorithm: "Selection Sort",
       array: arr,
     });
@@ -129,7 +138,7 @@ function Sorting() {
     }
 
     setActiveIndex([]);
-    await axios.post("http://localhost:5000/history", {
+    await axios.post("https://algoviz-backend-9b5w.onrender.com/history", {
       algorithm: "Insertion Sort",
       array: arr,
     });
@@ -201,7 +210,12 @@ function Sorting() {
         {aiExplanation && (
           <div style={styles.aiBox}>
             <h3>🤖 AI Explanation</h3>
-            <ReactMarkdown>{aiExplanation}</ReactMarkdown>
+            <ReactMarkdown
+              remarkPlugins={[remarkMath]}
+              rehypePlugins={[rehypeKatex]}
+            >
+              {aiExplanation}
+            </ReactMarkdown>
           </div>
         )}
         <div style={styles.barContainer}>

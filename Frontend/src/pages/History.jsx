@@ -12,7 +12,7 @@ function History() {
 
   const fetchHistory = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/history");
+      const res = await axios.get("https://algoviz-backend-9b5w.onrender.com/history");
       setHistory(res.data);
     } catch (error) {
       console.log(error);
@@ -29,7 +29,7 @@ function History() {
 
   const deleteHistory = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/history/${id}`);
+      await axios.delete(`https://algoviz-backend-9b5w.onrender.com/history/${id}`);
 
       fetchHistory();
     } catch (error) {
