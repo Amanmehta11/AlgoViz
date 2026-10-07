@@ -17,6 +17,12 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("AlgoViz Backend Running ");
 });
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    message: "AlgoViz Backend is awake",
+  });
+});
 
 console.log("Calling connectDB");
 connectDB();
